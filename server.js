@@ -56,6 +56,40 @@ app.post('/api/tickets', async (req,res) =>{
   }
 });
 
+//UPDATE (PUT)
+app.put('/api/tickets/:id', async (req,res) => {
+  try{
+    const updatedTicket = await Ticket.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {new: true, runValidators: true}
+    );
+
+    if(!updatedTicket){
+      return res.status(404).json({message: "Ticket not found."});
+    }
+
+    res.status(200).json(updatedTicket);
+  }catch (error){
+    res.status(400).json({message: "Update failed", error: error.message});
+  }
+});
+
+//DELETE
+app.delete('/api/tickets/:id', async (req,res) => {
+  try{
+    const deletedTicket = await Ticket.findByIdAndDelete(req.params.id);
+
+    if(!deletedTicket){
+      return res.status(404).json({message: "Ticket not found."});
+    }
+
+    res.status(200).json({message: "Ticket successfully deleted"});
+  }catch (error){
+    res.status(500).json({message: "Server error", error: error.message});
+  }
+
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
